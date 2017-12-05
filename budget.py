@@ -1,15 +1,14 @@
 from flask import Flask, jsonify, render_template
 from flask_restful import Resource, Api, reqparse, abort
-
+from datetime import date
 app = Flask(__name__)
 api = Api(app)
 purchases = [
-	{'amount': 50, 'bought': 'food', 'date': '12-5-2017', 'category': 'testcat'},
-	{'amount': 50, 'bought': 'food', 'date': '12-5-2017', 'category': 'testcat'}
+	{'amount': 50, 'bought': 'food', 'date': str(date.today()), 'category': 'testcat'}
 ]
-categories = {
-	'testcat': {'limit': 100, 'purchases': []}
-}
+categories = [
+	{'testcat': {'limit': 100, 'purchases': [purchases[0]]}}
+]
 
 category_parser = reqparse.RequestParser()
 category_parser.add_argument('name')
@@ -27,12 +26,25 @@ class Category(Resource):
 		#return categories
 	def post(self):
 		args = category_parser.parse_args()
-		categories[args['name']] = {'limit': int(args['limit']), 'purchases':[]}
-		return categories[args['name']], 201
+		keys = [list(cat)[0] for cat in categories]
+		print(keys)
+		if args['name'] in keys:
+			abort(400, description="Category already exists")
+		newcat = {}
+		newcat[args['name']] = {'limit': int(args['limit']), 'purchases':[]}
+		categories.append(newcat)
+		return newcat, 201
 		
 	def delete(self):
 		args = category_parser.parse_args()
-		del categories[args['name']]
+		i = 0
+		for index in range(0, len(categories)):
+			if args['name'] in categories[index]:
+				i = index
+		del categories[i]
+		for purchase in purchases:
+			if purchase['category'] == args['name']:
+				purchase['category'] = ''
 		return None, 204
 
 class Purchase(Resource):
@@ -43,15 +55,19 @@ class Purchase(Resource):
 	def put(self):
 		args = purchase_parser.parse_args()
 		cat_name = args['category']
-		if cat_name not in categories:
+		keys = [list(cat)[0] for cat in categories]
+		if cat_name not in keys:
 			abort(400, description="Category does not exist")
 		newpurchase = {}
 		newpurchase['amount'] = args['amount']
 		newpurchase['bought'] = args['bought']
-		newpurchase['date'] = args['date']
+		d = args['date'].split('-')
+		newpurchase['date'] = str(date(int(d[0]), int(d[1]), int(d[2])))
 		newpurchase['category'] = cat_name
 		purchases.append(newpurchase)
-		categories[cat_name]['purchases'].append(newpurchase)
+		for cat in categories:
+			if cat_name in cat:
+				cat[cat_name]['purchases'].append(newpurchase)
 		return newpurchase, 201
 
 @app.route("/")

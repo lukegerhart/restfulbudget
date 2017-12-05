@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Budget</title>
+		<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+	</head>
+	<body>
+		<h3>Budget Status:</h3>
+		<table id="categories">
+			<tr>
+				<th>Name</th>
+				<th>Limit</th>
+				<th>Purchases</th>
+				<th>Spent</th>
+				<th>Remaining</th>
+			</tr>
+		</table>
+		<h3>Uncategorized Purchases:</h3>
+		<table id="uncategorized">
+			<tr>
+				<th>Purchases</th>
+				<th>Spent</th>
+			</tr>
+		</table>
+		<h3> Add new category: </h3>
+		<form name="theForm">
+			Category Name:<input type="text" id="newcatname" />
+			</br>
+			Limit:<input type="text" id="newcatlimit"/>
+			</br>
+			<input type="button" id="addcat" value="Add" />
+		</form>
+	</body>
+</html>
+
