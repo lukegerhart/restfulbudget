@@ -1,6 +1,7 @@
 # money-on-my-mind-and-my-mind-on-my-rest-api-lukegerhart
 
 Name: Luke Gerhart
+
 Pitt ID: lag115
 
 ## Installation
@@ -15,6 +16,9 @@ Once installed, the application can be started with `flask run`.
 
 ##Special Instructions
 When run for the first time, there are no categories and no purchases, so the tables will have a header row but no body.
+
 When a category is deleted, the purchases in that category will be permanently marked as uncategorized.
+
 All fields must be filled out when adding a new purchase, except for "What category was it in?". If that category is left blank that purchase will be uncategorized.
+
 Doing anything that results in an error will cause an alert.
