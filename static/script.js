@@ -1,6 +1,4 @@
-var timeoutID;
-var timeout = 1000;
-
+numToMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function setup() {
 	document.getElementById("addcat").addEventListener("click", addCategory, true);
 	poller()
@@ -55,7 +53,9 @@ function addCategory() {
 
 function poller() {
 	makeReq("GET", "/cats", 200, repopulate);
-	makeReq("GET", "/purchases", 200, printConsole);
+	var d = new Date();
+	d = d.getMonth() + 1;
+	makeReq("GET", "/purchases", 200, printConsole, "month="+d);
 }
 
 function deleteCat(catName) {
@@ -117,19 +117,27 @@ function repopulate(responseText) {
 	for (t in cats) {
 		newRow = tab.insertRow();
 		console.log(cats[t]);
+		var month = new Date().getMonth();
+		addCell(newRow, numToMonth[month]);
 		keys = [];
 		for (var key in cats[t]) keys.push(key);
 		addCell(newRow, keys[0]);
 		var limit = cats[t][keys[0]]['limit']
 		addCell(newRow, "$"+limit);
 		var spentlist = cats[t][keys[0]]["purchases"].map(function(obj) {
-			return obj["amount"];
+			if (obj["date"].split("-")[1] == new Date().getMonth() + 1) {
+				return obj["amount"];
+			} else return 0;
 		});
 		var spent = 0;
 		if (spentlist.length != 0) {
 			spent = spentlist.reduce((prev, curr) => prev + curr);
 		}
-		addCell(newRow, spentlist.length);
+		var purchases = spentlist.reduce(function(prev, curr) {
+			if (curr != 0) return prev + 1;
+			else return prev;
+		});
+		addCell(newRow, purchases);
 		addCell(newRow, "$"+spent);
 		addCell(newRow, "$"+(limit-spent));
 		newCell = newRow.insertCell();

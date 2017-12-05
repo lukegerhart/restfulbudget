@@ -4,7 +4,7 @@ from datetime import date
 app = Flask(__name__)
 api = Api(app)
 purchases = [
-	{'amount': 50, 'bought': 'food', 'date': str(date.today()), 'category': 'testcat'}
+	{'amount': 50, 'bought': 'food', 'date': "2017-11-01", 'category': 'testcat'}
 ]
 categories = [
 	{'testcat': {'limit': 100, 'purchases': [purchases[0]]}}
@@ -20,6 +20,8 @@ purchase_parser.add_argument('bought')
 purchase_parser.add_argument('date')
 purchase_parser.add_argument('category')
 
+purchase_get_parser = reqparse.RequestParser()
+purchase_get_parser.add_argument('month')
 class Category(Resource):
 	def get(self):
 		return jsonify(categories)
@@ -50,8 +52,16 @@ class Category(Resource):
 class Purchase(Resource):
 	
 	def get(self):
-		return jsonify(purchases)
-	
+		#"""
+		args = purchase_get_parser.parse_args()
+		if args['month']:
+			purch = [purchase for purchase in purchases if purchase['date'].split('-')[1] == month]
+			print(purch)
+			return jsonify(purch)	
+		else:
+			return jsonify(purchases)
+		#"""
+		#return jsonify(purchases)
 	def put(self):
 		args = purchase_parser.parse_args()
 		cat_name = args['category']
