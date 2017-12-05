@@ -1,6 +1,7 @@
 numToMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function setup() {
 	document.getElementById("addcat").addEventListener("click", addCategory, true);
+	document.getElementById("addpurch").addEventListener("click", addPurchase, true);
 	poller()
 	//makeReq("GET", "/cats", 200, repopulate);
 	//makeReq("GET", "/purchases", 200, repopulate);
@@ -32,7 +33,7 @@ function makeHandler(httpRequest, retCode, action) {
 			if (httpRequest.status === retCode) {
 				action(httpRequest.responseText);
 			} else if (httpRequest.status == 400) {
-				alert(httpRequest.statusText);
+				alert("Please make sure all fields were entered correctly.");
 			} else {
 				alert("There was a problem with the request.  you'll need to refresh the page!");
 			}
@@ -41,20 +42,39 @@ function makeHandler(httpRequest, retCode, action) {
 	return handler;
 }
 
+function addPurchase() {
+	var newbought = document.getElementById("newbought").value;
+	var newamount = document.getElementById("newamount").value;
+	var newdate = document.getElementById("newdate").value;
+	var newcat = document.getElementById("newcat").value;
+	var data = "amount="+newamount+"&bought="+newbought+"&date="+newdate+"&category="+newcat;
+	makeReq("PUT", "/purchases", 201, poller, data);
+}
+
 function addCategory() {
-	var newname = document.getElementById("newcatname").value
-	var newlimit = document.getElementById("newcatlimit").value
-	var data;
-	data = "name=" + newname + "&limit="+newlimit;
+	var newname = document.getElementById("newcatname").value;
+	var newlimit = document.getElementById("newcatlimit").value;
+	var data = "name=" + newname + "&limit="+newlimit;
 	//window.clearTimeout(timeoutID);
 	makeReq("POST", "/cats", 201, poller, data);
 	//document.getElementById("newDo").value = "New ToDo Item";
 }
 
+function clearForms() {
+	document.getElementById("newbought").value = "";
+	document.getElementById("newamount").value = "";
+	document.getElementById("newdate").value = "";
+	document.getElementById("newcat").value = "";
+	document.getElementById("newcatname").value = "";
+	document.getElementById("newcatlimit").value = "";
+}
+
 function poller() {
+	clearForms();
 	makeReq("GET", "/cats", 200, repopulate);
 	var d = new Date();
-	d = d.getMonth() + 1;
+	//d = d.getMonth() + 1;
+	var data = "month="+(d.getMonth()+1)+"&year="+d.getFullYear();
 	makeReq("GET", "/purchases", 200, printConsole, "month="+d);
 }
 
@@ -125,7 +145,7 @@ function repopulate(responseText) {
 		var limit = cats[t][keys[0]]['limit']
 		addCell(newRow, "$"+limit);
 		var spentlist = cats[t][keys[0]]["purchases"].map(function(obj) {
-			if (obj["date"].split("-")[1] == new Date().getMonth() + 1) {
+			if (obj["date"].split("-")[1] == new Date().getMonth() + 1 && obj["date"].split("-")[0] == new Date().getFullYear()) {
 				return obj["amount"];
 			} else return 0;
 		});
@@ -136,7 +156,7 @@ function repopulate(responseText) {
 		var purchases = spentlist.reduce(function(prev, curr) {
 			if (curr != 0) return prev + 1;
 			else return prev;
-		});
+		}, 0);
 		addCell(newRow, purchases);
 		addCell(newRow, "$"+spent);
 		addCell(newRow, "$"+(limit-spent));

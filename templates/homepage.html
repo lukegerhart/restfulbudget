@@ -25,12 +25,23 @@
 		</table>
 		<h3> Add new category: </h3>
 		<form name="theForm">
-			Category Name:<input type="text" id="newcatname" />
+			Category Name:<input type="text" id="newcatname" required/>
 			</br>
-			Limit:<input type="text" id="newcatlimit"/>
+			Limit:<input type="text" id="newcatlimit" required/>
 			</br>
 			<input type="button" id="addcat" value="Add" />
 		</form>
+		<h3>Add new purchase: </h3>
+		<form name="newPurchase">
+			What was purchased?:<input type="text" id="newbought" required/>
+			</br>
+			How much was it?:<input type="text" id="newamount" required/>
+			</br>
+			When was it purchase?:<input type="date" id="newdate" required/>
+			</br>
+			What category was it in?:<input type="text" id="newcat"/>
+			</br>
+			<input type="button" id="addpurch" value="Add"/>
 	</body>
 </html>
 
