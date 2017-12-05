@@ -15,6 +15,7 @@ Pitt ID: lag115
 Once installed, the application can be started with `flask run`.
 
 ##Special Instructions
+
 When run for the first time, there are no categories and no purchases, so the tables will have a header row but no body.
 
 When a category is deleted, the purchases in that category will be permanently marked as uncategorized.
