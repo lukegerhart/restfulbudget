@@ -3,8 +3,6 @@ function setup() {
 	document.getElementById("addcat").addEventListener("click", addCategory, true);
 	document.getElementById("addpurch").addEventListener("click", addPurchase, true);
 	poller()
-	//makeReq("GET", "/cats", 200, repopulate);
-	//makeReq("GET", "/purchases", 200, repopulate);
 }
 
 function makeReq(method, target, retCode, action, data) {
@@ -73,7 +71,6 @@ function poller() {
 	clearForms();
 	makeReq("GET", "/cats", 200, repopulate);
 	var d = new Date();
-	//d = d.getMonth() + 1;
 	var data = "month="+(d.getMonth()+1)+"&year="+d.getFullYear();
 	makeReq("GET", "/purchases", 200, printConsole, "month="+d);
 }
@@ -118,7 +115,6 @@ function printConsole(responseText) {
 		
 		console.log(purchases[purchase])
 	}
-	//console.log(purchases);
 }
 
 function repopulate(responseText) {
@@ -126,7 +122,6 @@ function repopulate(responseText) {
 	var cats = JSON.parse(responseText);
 	var tab = document.getElementById("categories");
 	if (cats.length == 0) {
-		//tab.innerHTML = "There are no categories.";
 	}
 	var newRow, newCell, t, task, newButton, newDelF;
 
@@ -167,8 +162,6 @@ function repopulate(responseText) {
 		(function(_t){ newButton.addEventListener("click", function() { deleteCat(_t); }); })(keys[0]);
 		newCell.appendChild(newButton);
 	}
-	
-	//timeoutID = window.setTimeout(poller, timeout);
 }
 
 // setup load event
