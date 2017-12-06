@@ -32,7 +32,18 @@ function makeHandler(httpRequest, retCode, action) {
 				action(httpRequest.responseText);
 			} else if (httpRequest.status == 400) {
 				//alert("Please make sure all fields were entered correctly.");
-				alert(JSON.parse(httpRequest.responseText)['message']);
+				var response = JSON.parse(httpRequest.responseText);
+				//console.log(response['message']);
+				response = response["message"];
+				if (response["limit"]) {
+					alert(response["limit"]);
+				} else if (response["amount"]) {
+					alert(response["amount"]);
+				} else {
+					alert(response["message"]);
+				}
+				//console.log(response["message"]["limit"]);
+				
 			} else {
 				alert("There was a problem with the request.");
 			}

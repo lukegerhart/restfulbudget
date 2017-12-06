@@ -23,3 +23,5 @@ When a category is deleted, the purchases in that category will be permanently m
 All fields must be filled out when adding a new purchase, except for "What category was it in?". If that category is left blank that purchase will be uncategorized.
 
 Doing anything that results in an error will cause an alert.
+
+Negative amount of money in the "Remaining" column indicates over budget.
