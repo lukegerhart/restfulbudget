@@ -31,9 +31,10 @@ function makeHandler(httpRequest, retCode, action) {
 			if (httpRequest.status === retCode) {
 				action(httpRequest.responseText);
 			} else if (httpRequest.status == 400) {
-				alert("Please make sure all fields were entered correctly.");
+				//alert("Please make sure all fields were entered correctly.");
+				alert(JSON.parse(httpRequest.responseText)['message']);
 			} else {
-				alert("There was a problem with the request.  you'll need to refresh the page!");
+				alert("There was a problem with the request.");
 			}
 		}
 	}
@@ -45,6 +46,10 @@ function addPurchase() {
 	var newamount = document.getElementById("newamount").value;
 	var newdate = document.getElementById("newdate").value;
 	var newcat = document.getElementById("newcat").value;
+	if (newbought == "" || newamount == "" || newdate == "") {
+		alert("Make sure all fields are filled out when adding a purchase.");
+		return;
+	}
 	var data = "amount="+newamount+"&bought="+newbought+"&date="+newdate+"&category="+newcat;
 	makeReq("PUT", "/purchases", 201, poller, data);
 }
@@ -52,10 +57,12 @@ function addPurchase() {
 function addCategory() {
 	var newname = document.getElementById("newcatname").value;
 	var newlimit = document.getElementById("newcatlimit").value;
+	if (newname == "" || newlimit == "") {
+		alert("Make sure all fields are filled out when adding a category.");
+		return;
+	}
 	var data = "name=" + newname + "&limit="+newlimit;
-	//window.clearTimeout(timeoutID);
 	makeReq("POST", "/cats", 201, poller, data);
-	//document.getElementById("newDo").value = "New ToDo Item";
 }
 
 function clearForms() {

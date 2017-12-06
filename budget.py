@@ -14,10 +14,10 @@ categories = [
 
 category_parser = reqparse.RequestParser()
 category_parser.add_argument('name', required=True)
-category_parser.add_argument('limit', type=int, required=True)
+category_parser.add_argument('limit', type=float, required=True)
 
 purchase_parser = reqparse.RequestParser()
-purchase_parser.add_argument('amount', type=int, required=True)
+purchase_parser.add_argument('amount', type=float, required=True)
 purchase_parser.add_argument('bought', required=True)
 purchase_parser.add_argument('date', required=True)
 purchase_parser.add_argument('category')
@@ -25,6 +25,7 @@ purchase_parser.add_argument('category')
 purchase_get_parser = reqparse.RequestParser()
 purchase_get_parser.add_argument('month')
 purchase_get_parser.add_argument('year')
+
 class Category(Resource):
 	def get(self):
 		return jsonify(categories)
@@ -33,18 +34,20 @@ class Category(Resource):
 		keys = [list(cat)[0] for cat in categories]
 		print(keys)
 		if args['name'] in keys:
-			abort(400, description="Category already exists")
+			abort(400, message="Category already exists")
 		newcat = {}
-		newcat[args['name']] = {'limit': int(args['limit']), 'purchases':[]}
+		newcat[args['name']] = {'limit': float(args['limit']), 'purchases':[]}
 		categories.append(newcat)
 		return newcat, 201
 		
 	def delete(self):
 		args = category_parser.parse_args()
-		i = 0
+		i = -1
 		for index in range(0, len(categories)):
 			if args['name'] in categories[index]:
 				i = index
+		if i == -1:
+			abort(400, message="Category does not exist")
 		del categories[i]
 		for purchase in purchases:
 			if purchase['category'] == args['name']:
@@ -63,9 +66,12 @@ class Purchase(Resource):
 	def put(self):
 		args = purchase_parser.parse_args()
 		cat_name = args['category']
-		keys = [list(cat)[0] for cat in categories]
+		if len(cat_name) > 0:
+			keys = [list(cat)[0] for cat in categories]
+			if cat_name not in keys:
+				abort(400, message="Category does not exist")
 		newpurchase = {}
-		newpurchase['amount'] = args['amount']
+		newpurchase['amount'] = float(args['amount'])
 		newpurchase['bought'] = args['bought']
 		d = args['date'].split('-')
 		newpurchase['date'] = str(date(int(d[0]), int(d[1]), int(d[2])))
