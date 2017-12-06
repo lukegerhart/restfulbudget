@@ -32,7 +32,6 @@ class Category(Resource):
 	def post(self):
 		args = category_parser.parse_args()
 		keys = [list(cat)[0] for cat in categories]
-		print(keys)
 		if args['name'] in keys:
 			abort(400, message="Category already exists")
 		newcat = {}
